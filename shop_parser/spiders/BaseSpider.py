@@ -12,7 +12,6 @@ class BaseSpider(Spider):
   #   for url in urls:
   #       yield scrapy.Request(url=url, callback=self.parse)
 
-
   def parse(self, response):
     for catalog in response.xpath('//div[@class="items__item lk__stocksItem "]'):
       yield parse_obj(catalog)

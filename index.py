@@ -1,7 +1,8 @@
+import requests
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 from scrapy.crawler import CrawlerRunner
-from shop_parser import BaseSpider
+import shop_parser.config
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secta'
@@ -26,15 +27,11 @@ def index():
 def parse():
   if request.method == 'POST':
     site = request.form.get('site')
-    global json
-    json = []
-    result = crawler.crawl(BaseSpider, json = json, start_urls = [site])
-    result.addCallback(finish)
-    return 'Парсин начался' 
+    contex = requests.get('http://127.0.0.1:9080/crawl.json?spider_name=base&url={}'.format(site))
+    return contex.json()
 
 def finish():
   print(json)
 
 if __name__ == '__main__':
-  socketio.run(app, debug=True, host='0.0.0.0') #TODO вынести в конфиг
-
+  socketio.run(app, SERVER_CONFIG['debug_mode'], SERVER_CONFIG['host'])
